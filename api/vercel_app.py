@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 app = FastAPI()
 
@@ -20,7 +21,7 @@ async def root():
 async def health_check():
     return {"status": "healthy"}
 
-# Add other endpoints here
-
-# Vercel requires this to be named 'app'
-app = app
+# Vercel-specific handler
+if os.getenv("VERCEL"):
+    from mangum import Mangum
+    handler = Mangum(app)
